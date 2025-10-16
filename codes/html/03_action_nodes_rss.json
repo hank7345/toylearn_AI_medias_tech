@@ -1,0 +1,197 @@
+{
+  "name": "study_04_schedule_trigger_telegram_RSSread",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        -160
+      ],
+      "id": "4edce952-49cf-4c7c-b9e9-d33aef9a077d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://www.yna.co.kr/rss/industry.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -208,
+        64
+      ],
+      "id": "dc8e64a5-17af-4eb7-8a93-26c8594961da",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "maxItems": 2,
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        0,
+        64
+      ],
+      "id": "f81090b0-4cf1-47ef-8d3d-0b969f34ef2e",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "chatId": "8252220010",
+        "text": "=n8n에서 보냅니다.\n제목:{{ $('RSS Read').item.json.title }}\n발행일:{{ $('RSS Read').item.json.pubDate }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        64
+      ],
+      "id": "dbc325ef-fc1d-4886-a4cf-596511200655",
+      "name": "Send a text message1",
+      "webhookId": "7a83a6f6-6fab-450f-8f0b-2b8f026b4e86",
+      "credentials": {
+        "telegramApi": {
+          "id": "QXlH3MEHDrsJ74Tm",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://news.einfomax.co.kr/rss/S1N2.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        -160
+      ],
+      "id": "1e1e7065-6a1b-4f35-af39-77b6782415aa",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {
+        "maxItems": 2,
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -160
+      ],
+      "id": "82b153ed-04cc-4dbe-b2d9-2793e08a4208",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "chatId": "8252220010",
+        "text": "=n8n에서 보냅니다.\n제목:{{ $('RSS Read1').item.json.title }}\n발행일:{{ $('RSS Read1').item.json.pubDate }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -160
+      ],
+      "id": "cacb2fc6-6e73-458e-9e43-526043f5dd62",
+      "name": "Send a text message",
+      "webhookId": "7a83a6f6-6fab-450f-8f0b-2b8f026b4e86",
+      "credentials": {
+        "telegramApi": {
+          "id": "QXlH3MEHDrsJ74Tm",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read1": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8f4a6540-980d-42b3-aeb9-d66a58348fd4",
+  "meta": {
+    "instanceId": "f1a715ec01b8dc05f936ac0df2c8292d4f944571776c4f13401df75b330e39f5"
+  },
+  "id": "tKzYEDCNHmCAti0p",
+  "tags": []
+}
