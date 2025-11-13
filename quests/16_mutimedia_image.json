@@ -1,0 +1,222 @@
+{
+  "name": "16_multimedia_images",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "이미지 변환",
+        "formDescription": "이미지 변환",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "input_images",
+              "fieldType": "file",
+              "multipleFiles": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -608,
+        -128
+      ],
+      "id": "5c170adc-6840-4965-83e3-7e6dbd0c1324",
+      "name": "On form submission",
+      "webhookId": "bb64d075-d6de-459b-9ae0-6d4a99ea28c6"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "AIzaSyBiezz7Y_8z52AcTPR8uzpD3uToA9ntngY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [{\n    \"parts\": [\n      {\n        \"text\": \"이미지속의 인물에 멋진 양복정장을 입은 이미지로 생성\"\n      },\n      {\n        \"inline_data\": {\n          \"mime_type\": \"{{ $('On form submission').item.json.input_images.mimetype }}\",\n          \"data\": \"{{ $json.data }}\"\n        }\n      }\n    ]\n  }]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -176,
+        -128
+      ],
+      "id": "c7715dfe-2ae5-4400-982a-bbda9312272f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "candidates[0].content.parts[1].inlineData.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        -128
+      ],
+      "id": "acf94433-f36b-427f-b324-c3c1b09d8db0",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "input_images",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -128
+      ],
+      "id": "f3d748f4-8eb2-44c8-addf-f01354832aa3",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "content": "## 전신사진, 증명사진으로 변환",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        -112
+      ],
+      "id": "d4e4b7bd-3dd5-4c72-b662-8d6d4817db85",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## IMAGES\n파일을 추출하는 역할 (이미지 파일을 --> text로)",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        48
+      ],
+      "id": "fe72db6c-62aa-4950-a5f8-0d7f53a38e54",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## 제미나이 api 호출\n프롬프트 와 이미지 . api 필요이미지 편집 (텍스트 및 이미지 간)",
+        "height": 80,
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        96
+      ],
+      "id": "833dc400-9198-4896-b7c0-d8e45754a6b2",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "name": "images",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "https://drive.google.com/drive/folders/1dPh-vgccb3aRJYQGFWTdP8bV0eDzmeui",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        256,
+        -128
+      ],
+      "id": "16afad48-98a1-490b-a4fe-ae2200729dcd",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "E7FnNWnoKndxkcsB",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1ddd0330-a0c5-4d83-b024-3191d6cde748",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6e421c0033135b46f67917480689b0779a89824eea6ca39c77546a106d1f99d8"
+  },
+  "id": "vlO0vcEYRE96ErAb",
+  "tags": []
+}

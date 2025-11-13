@@ -1,0 +1,359 @@
+{
+  "name": "weather",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=http://api.openweathermap.org/data/2.5/forecast",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "lat",
+              "value": "44.34"
+            },
+            {
+              "name": "lon",
+              "value": "10.99"
+            },
+            {
+              "name": "appid",
+              "value": "19dd6e10c7c173d0d7721aef707dee11"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -816,
+        -400
+      ],
+      "id": "5c769895-7713-4497-b2ef-eab10e44301a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "url": "=http://api.openweathermap.org/geo/1.0/direct",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json['도시이름'] }}"
+            },
+            {
+              "name": "limit",
+              "value": "1"
+            },
+            {
+              "name": "appid",
+              "value": "19dd6e10c7c173d0d7721aef707dee11"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1184,
+        -400
+      ],
+      "id": "d8c99b1a-4bae-4a7b-8375-9b0aaafc1fea",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "formTitle": "도시정보입력",
+        "formDescription": "입력한 도시 날씨 정보 제공",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "도시이름",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -1376,
+        -400
+      ],
+      "id": "01118635-5ff8-4425-b209-35b6dc8d431a",
+      "name": "On form submission",
+      "webhookId": "6f1fa934-1567-48fc-8e7e-2bd88cce6129"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/1eRTTMTl3NMOKJlSkxJExj9kIVU4VjeIApXEsIzkxirk/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eRTTMTl3NMOKJlSkxJExj9kIVU4VjeIApXEsIzkxirk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "도시명": "={{ $json['도시명'] }}",
+            "확인일시": "={{ $now }}",
+            "위도": "={{ $json['위도'] }}",
+            "경도": "={{ $json['경도'] }}",
+            "current": "={{ $json.current }}",
+            "Daily": "={{ $json.daily }}"
+          },
+          "matchingColumns": [
+            "확인일시"
+          ],
+          "schema": [
+            {
+              "id": "도시명",
+              "displayName": "도시명",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "위도",
+              "displayName": "위도",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "경도",
+              "displayName": "경도",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "확인일시",
+              "displayName": "확인일시",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "current",
+              "displayName": "current",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Daily",
+              "displayName": "Daily",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -432,
+        -400
+      ],
+      "id": "d01eb107-b1d4-475c-948c-22e3a2e80209",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "lToY8JUaHf8aIpp0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8a91041a-f1ee-4b3f-9424-8ddc33ccb229",
+              "name": "도시명",
+              "value": "={{ $('On form submission').item.json['도시이름'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0e5341d0-e5d2-493c-ab0f-0671286e03c0",
+              "name": "위도",
+              "value": "={{ $json.city.coord.lat }}",
+              "type": "string"
+            },
+            {
+              "id": "58c555c6-c737-47f0-84a5-cba325ae4fdd",
+              "name": "경도",
+              "value": "={{ $json.city.coord.lon }}",
+              "type": "string"
+            },
+            {
+              "id": "a13fabea-fac1-449e-9a64-45d004dce95b",
+              "name": "확인일시",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "f7582759-6d98-4187-922e-455b5f93fc1e",
+              "name": "current",
+              "value": "={{ $('HTTP Request2').item.json.weather }}",
+              "type": "string"
+            },
+            {
+              "id": "2dc4547d-5c38-4618-bcf0-e04105960bf1",
+              "name": "daily",
+              "value": "={{ $('HTTP Request2').item.json.weather }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -640,
+        -400
+      ],
+      "id": "9f901c7f-fe58-432f-9ef7-ca2ea26001f8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "lat",
+              "value": "44.34"
+            },
+            {
+              "name": "lon",
+              "value": "10.99"
+            },
+            {
+              "name": "appid",
+              "value": "19dd6e10c7c173d0d7721aef707dee11"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1008,
+        -400
+      ],
+      "id": "7b2c6a22-596a-44f7-95b1-779cbde3e966",
+      "name": "HTTP Request2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "89e85b97-301a-4454-aff7-151480d4b650",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6e421c0033135b46f67917480689b0779a89824eea6ca39c77546a106d1f99d8"
+  },
+  "id": "Q4GMylUgJwN2DDGt",
+  "tags": []
+}
